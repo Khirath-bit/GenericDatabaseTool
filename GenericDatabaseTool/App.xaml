@@ -1,0 +1,23 @@
+﻿<Application x:Class="GenericDatabaseTool.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:GenericDatabaseTool"
+             xmlns:view="clr-namespace:GenericDatabaseTool.ViewModels"
+             xmlns:views="clr-namespace:GenericDatabaseTool.Views"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- MahApps.Metro resource dictionaries. Make sure that all file names are Case Sensitive! -->
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <!-- Theme setting -->
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Dark.Steel.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <DataTemplate DataType="{x:Type view:ErrorMessageViewModel}">
+                <views:ErrorResponseView />
+            </DataTemplate>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

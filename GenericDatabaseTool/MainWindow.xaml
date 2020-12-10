@@ -1,0 +1,86 @@
+﻿<mah:MetroWindow  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                  x:Class="GenericDatabaseTool.MainWindow"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:local="clr-namespace:GenericDatabaseTool"
+                  xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+                  xmlns:viewModels="clr-namespace:GenericDatabaseTool.ViewModels" xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
+                  xmlns:manager="clr-namespace:GenericDatabaseTool.Managers"
+                  xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+                 
+                  mc:Ignorable="d"
+                  Title="Generic Database Tool">
+    <mah:MetroWindow.DataContext>
+        <viewModels:MainWindowViewModel></viewModels:MainWindowViewModel>
+    </mah:MetroWindow.DataContext>
+    <mah:MetroWindow.RightWindowCommands>
+        <mah:WindowCommands>
+            <mah:DropDownButton ItemsSource="{Binding Databases}" Content="Databases" DisplayMemberPath="Database">
+                <mah:DropDownButton.ItemContainerStyle>
+                    <Style BasedOn="{StaticResource {x:Type MenuItem}}" TargetType="{x:Type MenuItem}">
+                        <Setter Property="Command" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type mah:DropDownButton}}, Path=DataContext.SelectDatabaseCommand}" />
+                        <Setter Property="CommandParameter" Value="{Binding Database}" />
+                    </Style>
+                </mah:DropDownButton.ItemContainerStyle>
+                <mah:DropDownButton.Icon>
+                    <iconPacks:PackIconMaterial Margin="6" Kind="Database" />
+                </mah:DropDownButton.Icon>
+            </mah:DropDownButton>
+            <Button Command="{Binding OpenSettingsWindow}">
+                <Button.ContentTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconModern Width="22"
+                                                      Height="22"
+                                                      VerticalAlignment="Center"
+                                                      Kind="Settings" />
+                            <TextBlock Margin="4 0 0 0"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </Button.ContentTemplate>
+            </Button>
+        </mah:WindowCommands>
+    </mah:MetroWindow.RightWindowCommands>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <TabControl mah:HeaderedControlHelper.HeaderFontSize="12" Grid.Row="0">
+            <TabItem  Header="tmp1">
+                <Grid >
+                    <avalonedit:TextEditor
+                        KeyDown="Sqleditor_OnKeyDown"
+                        Name="sqleditor" WordWrap="True" FontFamily="Hack,Consolas" FontSize="12"  ShowLineNumbers="True" >
+                        <b:Interaction.Behaviors>
+                            <manager:AvalonEditBehaviour Sql="{Binding PlainSql, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></manager:AvalonEditBehaviour>
+                        </b:Interaction.Behaviors>
+                    </avalonedit:TextEditor>
+                    <Button Command="{Binding RunSqlCommand}" HorizontalAlignment="Right" Margin="5" VerticalAlignment="Bottom">Execute (F5)</Button>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        
+        
+        <GridSplitter Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Row="1" Margin="0,2,0,2"></GridSplitter>
+        <ContentControl Grid.Row="2" Content="{Binding View}"></ContentControl>
+        <StatusBar Grid.Row="3" VerticalAlignment="Bottom">
+            <StatusBarItem>
+                <TextBlock Text="{Binding ConnectionString}"></TextBlock>
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Elapsed: " />
+                    <TextBlock Foreground="LightBlue" Text="{Binding ElapsedQueryTime, StringFormat={}{0:hh':'mm':'ss':'fff}}" />
+                </StackPanel>
+            </StatusBarItem>
+        </StatusBar>
+        <TextBlock Grid.Row="3" HorizontalAlignment="Center" Foreground="Orange" Text="{Binding WindowsUser}"></TextBlock>
+    </Grid>
+</mah:MetroWindow>
