@@ -389,6 +389,7 @@
             <Word>SESSION_USER</Word>
             <Word>SET</Word>
             <Word>SETUSER</Word>
+            <Word>SHOW</Word>
             <Word>SHUTDOWN</Word>
             <Word>SIZE</Word>
             <Word>SMALLINT</Word>

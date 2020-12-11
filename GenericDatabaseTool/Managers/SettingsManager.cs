@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Windows;
 using System.Xml;
+using GenericDatabaseTool.Models;
 using Newtonsoft.Json;
 
 namespace GenericDatabaseTool.Managers
@@ -97,5 +100,45 @@ namespace GenericDatabaseTool.Managers
 #endif
             }
         }
+
+        /// <summary>
+        /// Gets example script information
+        /// </summary>
+        public static List<ScriptInfo> GetExampleScriptInfos()
+        {
+            return new List<ScriptInfo>
+            {
+                new ScriptInfo
+                {
+                    Name = "Create Table",
+                    Path = Path.Combine(GetBaseFolder(), "ExampleScripts\\CreateTable.sql")
+                },
+                new ScriptInfo
+                {
+                    Name = "Select",
+                    Path = Path.Combine(GetBaseFolder(), "ExampleScripts\\Select.sql")
+                },
+                new ScriptInfo
+                {
+                    Name = "Insert",
+                    Path = Path.Combine(GetBaseFolder(), "ExampleScripts\\Insert.sql")
+                },
+                new ScriptInfo
+                {
+                    Name = "Join",
+                    Path = Path.Combine(GetBaseFolder(), "ExampleScripts\\Join.sql")
+                },
+            };
+        }
+
+        /// <summary>
+        /// Gets the path of the base folder, for the application that is currently running
+        /// </summary>
+        /// <returns>The path of the base folder</returns>
+        public static string GetBaseFolder()
+        {
+            return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        }
+
     }
 }

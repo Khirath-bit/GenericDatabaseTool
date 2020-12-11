@@ -10,7 +10,13 @@
     <UserControl.DataContext>
         <viewModels:ResultTableViewViewModel></viewModels:ResultTableViewViewModel>
     </UserControl.DataContext>
+    <UserControl.ContextMenu>
+        <ContextMenu>
+            <MenuItem Name="ExportCsv" Header="Export as CSV" Click="ExportCsv_OnClick"></MenuItem>
+            <MenuItem Name="ExportJson" Header="Export as JSON" Click="ExportJson_OnClick"></MenuItem>
+        </ContextMenu>
+    </UserControl.ContextMenu>
     <Grid>
-                <DataGrid Name="ResultGrid" IsReadOnly="True" ItemsSource="{Binding ItemSource}" AutoGenerateColumns="False"></DataGrid>
+         <DataGrid AlternatingRowBackground="#333333" GridLinesVisibility="Vertical" Name="ResultGrid" IsReadOnly="True" ItemsSource="{Binding ItemSource}" AutoGenerateColumns="False"></DataGrid>
     </Grid>
 </UserControl>

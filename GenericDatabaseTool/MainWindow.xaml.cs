@@ -1,18 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+﻿using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using GenericDatabaseTool.Managers;
 using GenericDatabaseTool.ViewModels;
 using MahApps.Metro.Controls;
 
@@ -31,20 +18,15 @@ namespace GenericDatabaseTool
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            if(DataContext is MainWindowViewModel vm)
-                vm.GetSelectedSql = () => sqleditor.SelectedText;
-
-            AvalonManager.InitAvalonEditor(sqleditor);
-
-            sqleditor.Text = "SELECT * FROM kunden";
+            KeyDown += MainWindow_MouseDown;
         }
 
-        private void Sqleditor_OnKeyDown(object sender, KeyEventArgs e)
+        private void MainWindow_MouseDown(object sender, KeyEventArgs e)
         {
-            if(!(DataContext is MainWindowViewModel vm))
+            if (!(DataContext is MainWindowViewModel vm) || e.Key != Key.F5)
                 return;
 
-            if(e.Key == Key.F5)
+            if(vm.RunSqlCommand.CanExecute(null))
                 vm.RunSqlCommand.Execute(null);
         }
     }

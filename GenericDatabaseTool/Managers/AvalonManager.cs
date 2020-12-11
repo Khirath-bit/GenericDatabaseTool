@@ -18,11 +18,12 @@ namespace GenericDatabaseTool.Managers
         /// Init the avalon editor
         /// </summary>
         /// <param name="editor">The desired editor</param>
-        public static void InitAvalonEditor(TextEditor editor)
+        public static void InitAvalonEditor(TextEditor editor, object tag)
         {
             editor.Options.HighlightCurrentLine = true;
             editor.SyntaxHighlighting = LoadSqlSchema(true);
             editor.Foreground = new SolidColorBrush(Colors.White);
+            editor.Text = TabManager.GetSessionSql(tag);
         }
 
         /// <summary>

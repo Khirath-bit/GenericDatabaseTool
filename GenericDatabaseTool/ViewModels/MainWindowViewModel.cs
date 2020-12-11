@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Windows;
+using System.Net;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Dapper;
 using GenericDatabaseTool.Database;
 using GenericDatabaseTool.Managers;
 using GenericDatabaseTool.Models;
 using GenericDatabaseTool.Views;
-using MySqlX.XDevAPI.Common;
 using Utility.MVVM;
+using Application = System.Windows.Application;
 
 namespace GenericDatabaseTool.ViewModels
 {
@@ -31,34 +34,6 @@ namespace GenericDatabaseTool.ViewModels
         }
 
         /// <summary>
-        /// Contains the sql plain text
-        /// </summary>
-        private string _sqlPlain;
-
-        /// <summary>
-        /// Gets or sets the sql plain text
-        /// </summary>
-        public string PlainSql
-        {
-            get => _sqlPlain;
-            set => SetField(ref _sqlPlain, value);
-        }
-
-        /// <summary>
-        /// Contains the selected plain sql 
-        /// </summary>
-        private string _selectedPlainSql;
-
-        /// <summary>
-        /// Gets or sets the selected plain sql
-        /// </summary>
-        public string SelectedPlainSql
-        {
-            get => _selectedPlainSql;
-            set => SetField(ref _selectedPlainSql, value);
-        }
-
-        /// <summary>
         /// Contains the database names
         /// </summary>
         private List<DatabaseInfo> _databases;
@@ -73,23 +48,46 @@ namespace GenericDatabaseTool.ViewModels
         }
 
         /// <summary>
-        /// Contains the selected database
+        /// Contains the editor page
         /// </summary>
-        private string _selectedDatabase;
+        private ObservableCollection<TabItem> _editorPages = new ObservableCollection<TabItem>();
 
         /// <summary>
-        /// Gets or sets the selected database
+        /// Gets or sets the editor pages
         /// </summary>
-        public string SelectedDatabase
+        public ObservableCollection<TabItem> EditorPages
         {
-            get => _selectedDatabase;
-            set => SetField(ref _selectedDatabase, value);
+            get => _editorPages;
+            set => SetField(ref _editorPages, value);
         }
 
         /// <summary>
-        /// Contains the method to get selected sql
+        /// Contains if the databsae is connected
         /// </summary>
-        public Func<string> GetSelectedSql { get; set; }
+        private bool _isDatabaseConnected;
+
+        /// <summary>
+        /// Gets or sets if the database is connected
+        /// </summary>
+        public bool IsDatabaseConnected
+        {
+            get => _isDatabaseConnected;
+            set => SetField(ref _isDatabaseConnected, value);
+        }
+
+        /// <summary>
+        /// Contains the scripts
+        /// </summary>
+        private List<ScriptInfo> _scripts;
+
+        /// <summary>
+        /// Gets or sets the scripts
+        /// </summary>
+        public List<ScriptInfo> Scripts
+        {
+            get => _scripts;
+            set => SetField(ref _scripts, value);
+        }
 
         #region StatusBar
 
@@ -137,6 +135,52 @@ namespace GenericDatabaseTool.ViewModels
 
         #endregion
 
+        #region TableView
+
+        /// <summary>
+        /// Contains the table view width
+        /// </summary>
+        private string _tableViewWidth = "0";
+
+        /// <summary>
+        /// Gets or sets the table view width
+        /// </summary>
+        public string TableViewWidth
+        {
+            get => _tableViewWidth;
+            set => SetField(ref _tableViewWidth, value);
+        }
+
+        /// <summary>
+        /// Contains if the table view grid splitter is visible
+        /// </summary>
+        private bool _isTableViewGridSplitterVisible;
+
+        /// <summary>
+        /// Gets or sets if the table view grid splitter is visible
+        /// </summary>
+        public bool IsTableViewGridSplitterVisible
+        {
+            get => _isTableViewGridSplitterVisible;
+            set => SetField(ref _isTableViewGridSplitterVisible, value);
+        }
+
+        /// <summary>
+        /// Contains the table view items
+        /// </summary>
+        private List<TreeViewItem> _tableViewItems;
+
+        /// <summary>
+        /// Gets or sets the table view items
+        /// </summary>
+        public List<TreeViewItem> TableViewItems
+        {
+            get => _tableViewItems;
+            set => SetField(ref _tableViewItems, value);
+        }
+
+        #endregion
+
         /// <summary>
         /// Command to open the settings window
         /// </summary>
@@ -145,12 +189,24 @@ namespace GenericDatabaseTool.ViewModels
         /// <summary>
         /// Command to run the sql script
         /// </summary>
-        public ICommand RunSqlCommand => new DelegateCommand(RunSql);
+        public ICommand RunSqlCommand => new RelayCommand((obj) => RunSql(), () => EditorPages.Any());
 
         /// <summary>
         /// Command to select a databsae
         /// </summary>
         public ICommand SelectDatabaseCommand => new RelayCommand(SelectDatabase, CanSelectDatabase);
+
+        /// <summary>
+        /// Command to add a new editor page
+        /// </summary>
+        public ICommand AddPageCommand => new DelegateCommand(() => AddPage());
+
+        /// <summary>
+        /// Command to show table view
+        /// </summary>
+        public ICommand ShowTableViewCommand => new DelegateCommand(ShowTableView);
+
+        public ICommand SelectScriptCommand => new RelayCommand(SelectScript);
 
         /// <summary>
         /// Creates a new instance of <see cref="MainWindowViewModel"/>
@@ -160,6 +216,27 @@ namespace GenericDatabaseTool.ViewModels
             SettingsManager.SettingsChanged += SettingsManager_SettingsChanged;
             WindowsUser = Environment.UserName;
             TrySetServerInfos();
+            AddPage();
+            Scripts = SettingsManager.GetExampleScriptInfos();
+        }
+
+        /// <summary>
+        /// Selects an example script
+        /// </summary>
+        /// <param name="param"></param>
+        private void SelectScript(object param)
+        {
+            try
+            {
+                if (!File.Exists(param.ToString()))
+                    return;
+
+                AddPage(File.ReadAllText(param.ToString()));
+            }
+            catch (Exception)
+            {
+                //TODO: LOGGING
+            }
         }
 
         /// <summary>
@@ -171,12 +248,23 @@ namespace GenericDatabaseTool.ViewModels
         }
 
         /// <summary>
+        /// Shows table view
+        /// </summary>
+        private void ShowTableView()
+        {
+            TableViewWidth = TableViewWidth != "0" ? "0" : "Auto";
+            IsTableViewGridSplitterVisible = TableViewWidth != "0";
+            TableViewItems = TableViewWidth == "0" ? new List<TreeViewItem>() : MySqlManager.GetTables();
+        }
+
+        /// <summary>
         /// Selects the new database
         /// </summary>
         private void SelectDatabase(object name)
         {
             SettingsManager.Database = name.ToString();
             TrySetServerInfos();
+            IsDatabaseConnected = true;
         }
 
         /// <summary>
@@ -189,9 +277,11 @@ namespace GenericDatabaseTool.ViewModels
                 ConnectionString = MySqlDatabase.Connection.ConnectionString;
                 Databases = MySqlDatabase.Connection.Query<DatabaseInfo>("SHOW DATABASES").ToList();
                 ChangeView(new ErrorMessageViewModel { Message = "" });
+                IsDatabaseConnected = !string.IsNullOrWhiteSpace(SettingsManager.Database);
             }
             catch (Exception e)
             {
+                IsDatabaseConnected = false;
                 ConnectionString = "ERROR";
                 Databases = new List<DatabaseInfo>();
                 ChangeView(new ErrorMessageViewModel { Message = e.Message });
@@ -203,13 +293,13 @@ namespace GenericDatabaseTool.ViewModels
         /// </summary>
         private void RunSql()
         {
+            if(!EditorPages.Any())
+                return;
+
             try
             {
                 var watch = new Stopwatch();
-
-                var selectedSql = GetSelectedSql();
-
-                var sql = string.IsNullOrWhiteSpace(selectedSql) ? PlainSql : selectedSql;
+                var sql = TabManager.GetSqlFromTab(EditorPages.First(f => f.IsSelected));
 
                 var isSelect = MySqlManager.IsSelectStatement(sql);
 
@@ -285,6 +375,50 @@ namespace GenericDatabaseTool.ViewModels
             var settingsWindow =
                 new SettingsWindow { Owner = Application.Current.MainWindow };
             settingsWindow.ShowDialog();
+        }
+
+        /// <summary>
+        /// Adds a new editor page
+        /// </summary>
+        public void AddPage(string sql = "SELECT * FROM KUNDEN")
+        {
+            var newTab = new SqlEditorView {Tag = Guid.NewGuid()};
+
+            TabManager.StartSession(newTab.Tag, sql);
+
+            var nextNum = EditorPages.Count == 0 ? 1 : (int) EditorPages.Last().Tag + 1;
+
+            var newItem = new TabItem()
+            {
+                Content = newTab,
+                Header = $"new{nextNum}",
+                IsSelected = true,
+                Tag = nextNum
+            };
+
+            EditorPages.Add(newItem);
+
+            newItem.MouseDown += NewItem_MouseDown;
+        }
+
+        private void NewItem_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                var item = sender as TabItem;
+
+                var control = item.Content as SqlEditorView;
+
+                TabManager.EndSession(control.Tag);
+
+                if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Pressed)
+                    EditorPages.Remove(item);
+            }
+            catch (Exception exception)
+            {
+                
+            }
+            
         }
     }
 }

@@ -1,12 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Dynamic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
+using System.Windows.Forms;
 using GenericDatabaseTool.ViewModels;
+using Newtonsoft.Json;
 using Org.BouncyCastle.Crypto.Macs;
+using ServiceStack;
 using Utility.MVVM;
+using Binding = System.Windows.Data.Binding;
+using UserControl = System.Windows.Controls.UserControl;
 
 namespace GenericDatabaseTool.Views
 {
@@ -60,6 +65,28 @@ namespace GenericDatabaseTool.Views
 
                 ResultGrid.Items.Add(eo);
             }
+        }
+
+        private void ExportCsv_OnClick(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SaveFileDialog();
+
+            dialog.FileName = "exportCsv";
+            dialog.Filter = "CSV Datei (*.csv)|*.csv";
+
+            if (dialog.ShowDialog() != DialogResult.Cancel)
+                File.WriteAllText(dialog.FileName, _data.ToCsv());
+        }
+
+        private void ExportJson_OnClick(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SaveFileDialog();
+
+            dialog.FileName = "exportJson";
+            dialog.Filter = "JSON Datei (*.json)|*.json";
+
+            if (dialog.ShowDialog() != DialogResult.Cancel)
+                File.WriteAllText(dialog.FileName, JsonConvert.SerializeObject(_data));
         }
     }
 }
