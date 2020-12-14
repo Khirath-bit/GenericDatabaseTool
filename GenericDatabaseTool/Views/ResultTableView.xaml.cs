@@ -43,7 +43,7 @@ namespace GenericDatabaseTool.Views
         /// <summary>
         /// Set columns based on dictionary
         /// </summary>
-        private void SetColumns(IReadOnlyList<Dictionary<string, string>> data, ResultTableViewViewModel dataContext)
+        private void SetColumns(List<IDictionary<string, object>> data, ResultTableViewViewModel dataContext)
         {
             foreach (var row in data[0])
             {
@@ -56,14 +56,11 @@ namespace GenericDatabaseTool.Views
         /// <summary>
         /// Set dynamic rows
         /// </summary>
-        private void SetRows(IEnumerable<Dictionary<string, string>> data)
+        private void SetRows(IEnumerable<IDictionary<string, object>> data)
         {
             foreach (var row in data)
             {
-                dynamic eo = row.Aggregate(new ExpandoObject() as IDictionary<string, object>,
-                    (a, p) => { a.Add(p.Key, p.Value); return a; });
-
-                ResultGrid.Items.Add(eo);
+                ResultGrid.Items.Add(row);
             }
         }
 

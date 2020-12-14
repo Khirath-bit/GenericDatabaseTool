@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,12 +13,12 @@ namespace GenericDatabaseTool.ViewModels
         /// <summary>
         /// Contains the item source
         /// </summary>
-        private IEnumerable<Dictionary<string, string>> _itemSource;
+        private List<object> _itemSource;
 
         /// <summary>
         /// Gets or sets the item source
         /// </summary>
-        public IEnumerable<Dictionary<string, string>> ItemSource
+        public List<object> ItemSource
         {
             get => _itemSource;
             set => SetField(ref _itemSource, value);
@@ -26,16 +27,14 @@ namespace GenericDatabaseTool.ViewModels
         /// <summary>
         /// Gets or sets the column function
         /// </summary>
-        public List<Dictionary<string, string>> Cols { get; set; }
+        public List<IDictionary<string, object>> Cols { get; set; }
 
         /// <summary>
         /// Set columns for later use
         /// </summary>
         public void SetCols(List<IDictionary<string, object>> data)
         {
-            var correct = data.Select(s => s.Select(x => new KeyValuePair<string, string>(x.Key, x.Value.ToString())).ToDictionary(x => x.Key, x => x.Value)).ToList();
-
-            Cols = correct;
+            Cols = data;
         }
     }
 }

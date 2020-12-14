@@ -216,8 +216,8 @@ namespace GenericDatabaseTool.ViewModels
             SettingsManager.SettingsChanged += SettingsManager_SettingsChanged;
             WindowsUser = Environment.UserName;
             TrySetServerInfos();
-            AddPage();
             Scripts = SettingsManager.GetExampleScriptInfos();
+            AddPage();
         }
 
         /// <summary>
@@ -380,8 +380,11 @@ namespace GenericDatabaseTool.ViewModels
         /// <summary>
         /// Adds a new editor page
         /// </summary>
-        public void AddPage(string sql = "SELECT * FROM KUNDEN")
+        public void AddPage(string sql = null)
         {
+            if (sql == null)
+                sql = File.ReadAllText(Scripts.First(f => f.Name == "Select").Path);
+
             var newTab = new SqlEditorView {Tag = Guid.NewGuid()};
 
             TabManager.StartSession(newTab.Tag, sql);

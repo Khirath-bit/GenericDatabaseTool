@@ -17,6 +17,6 @@
         </ContextMenu>
     </UserControl.ContextMenu>
     <Grid>
-         <DataGrid AlternatingRowBackground="#333333" GridLinesVisibility="Vertical" Name="ResultGrid" IsReadOnly="True" ItemsSource="{Binding ItemSource}" AutoGenerateColumns="False"></DataGrid>
+         <DataGrid AlternatingRowBackground="#333333" GridLinesVisibility="Vertical" Name="ResultGrid" IsReadOnly="True" ItemsSource="{Binding ItemSource}" AutoGenerateColumns="True"></DataGrid>
     </Grid>
 </UserControl>
