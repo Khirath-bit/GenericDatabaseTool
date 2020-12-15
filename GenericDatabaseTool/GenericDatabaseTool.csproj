@@ -60,7 +60,7 @@
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BouncyCastle.Crypto, Version=1.8.3.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
@@ -238,7 +238,7 @@
       <HintPath>..\packages\MySql.Data.8.0.22\lib\net48\Ubiety.Dns.Core.dll</HintPath>
     </Reference>
     <Reference Include="Utility">
-      <HintPath>..\..\Kartenspiel\packages\Utility.dll</HintPath>
+      <HintPath>..\..\..\dlls\Utility.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -252,6 +252,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Managers\TableHelper.cs" />
     <Compile Include="Managers\TabManager.cs" />
     <Compile Include="Models\ScriptInfo.cs" />
     <Compile Include="Models\TableDescription.cs" />
@@ -347,7 +348,6 @@
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="GenericDatabaseTool_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

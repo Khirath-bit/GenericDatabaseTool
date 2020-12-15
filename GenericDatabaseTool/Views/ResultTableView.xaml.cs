@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using GenericDatabaseTool.Managers;
 using GenericDatabaseTool.ViewModels;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Crypto.Macs;
@@ -45,22 +47,44 @@ namespace GenericDatabaseTool.Views
         /// </summary>
         private void SetColumns(List<IDictionary<string, object>> data, ResultTableViewViewModel dataContext)
         {
+            var cols = new List<dynamic>();
+
+            var dataCorrect = new List<dynamic>();
+
             foreach (var row in data[0])
             {
-                ResultGrid.Columns.Add(new DataGridTextColumn{Header = row.Key, Binding = new Binding(row.Key)});
+                cols.Add(new KeyValuePair<string, string>(row.Key, Guid.NewGuid().ToString()));
             }
 
-            SetRows(data);
+            foreach (var row in cols)
+            {
+                ResultGrid.Columns.Add(new DataGridTextColumn { Header = row.Key, Binding = new Binding(row.Key) });
+            }
+
+            SetRows(data.ToList());
         }
 
         /// <summary>
         /// Set dynamic rows
         /// </summary>
-        private void SetRows(IEnumerable<IDictionary<string, object>> data)
+        private void SetRows(List<IDictionary<string, object>> data)
         {
             foreach (var row in data)
             {
                 ResultGrid.Items.Add(row);
+            }
+
+            FixCells(data);
+        }
+
+        private void FixCells(List<IDictionary<string, object>> data)
+        {
+            for (int i = 0; i < data.Count(); i++)
+            {
+                for (int j = 0; j < data[i].Count; j++)
+                {
+                    ResultGrid.GetCell(i, j).Content = data[i].Values.ElementAt(j);
+                }
             }
         }
 
@@ -85,5 +109,7 @@ namespace GenericDatabaseTool.Views
             if (dialog.ShowDialog() != DialogResult.Cancel)
                 File.WriteAllText(dialog.FileName, JsonConvert.SerializeObject(_data));
         }
+
+
     }
 }
