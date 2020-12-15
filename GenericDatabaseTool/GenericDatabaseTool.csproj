@@ -256,6 +256,7 @@
     <Compile Include="Managers\TabManager.cs" />
     <Compile Include="Models\ScriptInfo.cs" />
     <Compile Include="Models\TableDescription.cs" />
+    <Compile Include="Models\DynamicRow.cs" />
     <Compile Include="ViewModels\SqlEditorViewViewModel.cs" />
     <Compile Include="Views\SqlEditorView.xaml.cs">
       <DependentUpon>SqlEditorView.xaml</DependentUpon>

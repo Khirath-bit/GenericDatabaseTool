@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using GenericDatabaseTool.Managers;
+using GenericDatabaseTool.Models;
 using GenericDatabaseTool.ViewModels;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Crypto.Macs;
@@ -47,7 +48,7 @@ namespace GenericDatabaseTool.Views
         /// </summary>
         private void SetColumns(List<IDictionary<string, object>> data, ResultTableViewViewModel dataContext)
         {
-            var cols = new List<dynamic>();
+            var cols = new List<KeyValuePair<string, string>>();
 
             var dataCorrect = new List<dynamic>();
 
@@ -58,33 +59,34 @@ namespace GenericDatabaseTool.Views
 
             foreach (var row in cols)
             {
-                ResultGrid.Columns.Add(new DataGridTextColumn { Header = row.Key, Binding = new Binding(row.Key) });
+                ResultGrid.Columns.Add(new DataGridTextColumn { Header = row.Key, Binding = new Binding(row.Value) });
             }
 
-            SetRows(data.ToList());
+            SetRows(data.ToList(), cols);
         }
 
         /// <summary>
         /// Set dynamic rows
         /// </summary>
-        private void SetRows(List<IDictionary<string, object>> data)
+        private void SetRows(List<IDictionary<string, object>> data, List<KeyValuePair<string, string>> cols)
         {
-            foreach (var row in data)
+            var correctData = new List<DynamicRow>();
+
+            foreach (var d in data)
             {
-                ResultGrid.Items.Add(row);
+                var props = new Dictionary<string, object>();
+
+                for (int i = 0; i < cols.Count; i++)
+                {
+                    props.Add(cols.ElementAt(i).Value, d.ElementAt(i).Value);
+                }
+
+                correctData.Add(new DynamicRow(props));
             }
 
-            FixCells(data);
-        }
-
-        private void FixCells(List<IDictionary<string, object>> data)
-        {
-            for (int i = 0; i < data.Count(); i++)
+            foreach (var d in correctData)
             {
-                for (int j = 0; j < data[i].Count; j++)
-                {
-                    ResultGrid.GetCell(i, j).Content = data[i].Values.ElementAt(j);
-                }
+                ResultGrid.Items.Add(d);
             }
         }
 
