@@ -206,7 +206,17 @@ namespace GenericDatabaseTool.ViewModels
         /// </summary>
         public ICommand ShowTableViewCommand => new DelegateCommand(ShowTableView);
 
+        /// <summary>
+        /// Command to select a script
+        /// </summary>
         public ICommand SelectScriptCommand => new RelayCommand(SelectScript);
+
+        /// <summary>
+        /// Open the repository to this project
+        /// </summary>
+        public ICommand OpenGithubRepoCommand => new DelegateCommand(() => { 
+            try { Process.Start("https://github.com/Khirath-bit/GenericDatabaseTool"); } catch { }
+        });
 
         /// <summary>
         /// Creates a new instance of <see cref="MainWindowViewModel"/>

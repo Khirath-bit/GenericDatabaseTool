@@ -93,7 +93,7 @@
                 <Button.ContentTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconModern Width="22"
+                            <iconPacks:PackIconModern Width="20"
                                                       Height="22"
                                                       VerticalAlignment="Center"
                                                       Kind="Settings" />
@@ -103,6 +103,12 @@
                         </StackPanel>
                     </DataTemplate>
                 </Button.ContentTemplate>
+            </Button>
+            <Button Background="Transparent" Command="{Binding OpenGithubRepoCommand}">
+                <iconPacks:PackIconModern Width="20"
+                                          Height="18"
+                                          VerticalAlignment="Center"
+                                          Kind="Question" />
             </Button>
         </mah:WindowCommands>
     </mah:MetroWindow.RightWindowCommands>
@@ -132,9 +138,9 @@
                 <TextBlock Text="{Binding ConnectionString}"></TextBlock>
             </StatusBarItem>
             <StatusBarItem HorizontalAlignment="Right">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Elapsed: " />
-                    <TextBlock Foreground="LightBlue" Text="{Binding ElapsedQueryTime, StringFormat={}{0:hh':'mm':'ss':'fff}}" />
+                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center" Text="Elapsed: " />
+                    <TextBlock VerticalAlignment="Center" Foreground="LightBlue" Text="{Binding ElapsedQueryTime, StringFormat={}{0:hh':'mm':'ss':'fff}}" />
                 </StackPanel>
             </StatusBarItem>
         </StatusBar>
