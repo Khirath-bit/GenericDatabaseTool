@@ -62,6 +62,9 @@
   <PropertyGroup>
     <SignManifests>false</SignManifests>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>favicon2.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="BouncyCastle.Crypto, Version=1.8.3.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
       <HintPath>..\packages\BouncyCastle.1.8.3.1\lib\BouncyCastle.Crypto.dll</HintPath>
@@ -238,7 +241,7 @@
       <HintPath>..\packages\MySql.Data.8.0.22\lib\net48\Ubiety.Dns.Core.dll</HintPath>
     </Reference>
     <Reference Include="Utility">
-      <HintPath>..\..\..\dlls\Utility.dll</HintPath>
+      <HintPath>..\..\Kartenspiel\packages\Utility.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -273,6 +276,8 @@
     <Content Include="ExampleScripts\Select.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="favicon.ico" />
+    <Resource Include="favicon2.ico" />
     <Content Include="Schemes\sqldark.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
